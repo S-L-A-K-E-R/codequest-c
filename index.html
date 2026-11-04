@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c33">
+  <meta name="description" content="Apprends la programmation C, un exercice à la fois. Exécute ton code et progresse, sans compte et sans serveur.">
+  <title>CodeQuest C · Apprendre en pratiquant</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#" aria-label="Accueil CodeQuest C">
+      <span class="brand-mark">{ C }</span>
+      <span><strong>codequest<span class="brand-accent">.</span></strong><small>PROGRAMMATION C</small></span>
+    </a>
+    <div class="sidebar-label">TON ESPACE</div>
+    <nav class="nav" aria-label="Parcours">
+      <button type="button" class="nav-link is-selected" data-track="course"><span class="nav-emoji">⌘</span><span>Parcours C</span><span class="nav-right">30</span></button>
+      <button type="button" class="nav-link" data-track="revision"><span class="nav-emoji">◎</span><span>Soutien · Révision 1</span><span class="nav-right">20</span></button>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">TA PROGRESSION</div>
+    <div class="mini-stats">
+      <div><span class="mini-stat-icon">⚡</span><span><strong id="xpSidebar">0</strong><small>XP gagnés</small></span></div>
+      <div><span class="mini-stat-icon">🔥</span><span><strong id="streakSidebar">0</strong><small>jours de série</small></span></div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="privacy-note"><span>◉</span> Tes données restent dans ce navigateur.</div>
+      <button class="utility-btn" type="button" id="exportBtn">↓ Exporter ma progression</button>
+      <button class="utility-btn" type="button" id="importBtn">↑ Importer une sauvegarde</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <button class="utility-btn danger" type="button" id="resetBtn">↺ Réinitialiser</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="mobile-menu" id="menuBtn" aria-label="Afficher le menu">☰</button>
+      <div class="breadcrumb" id="breadcrumb">APPRENDRE / PARCOURS C</div>
+      <div class="top-actions"><span class="status-dot"></span> <span class="status-caption">100 % navigateur</span><span class="xp-pill">⚡ <b id="xpTop">0</b> XP</span></div>
+    </header>
+
+    <div class="content-inner">
+      <section class="hero">
+        <div class="hero-copy"><div class="eyebrow" id="heroEyebrow">TON AVENTURE COMMENCE ICI</div><h1 id="heroTitle">Apprends le C.<br><em>Un défi à la fois.</em></h1><p id="heroDesc">Écris du vrai code, teste tes idées et gagne de l'expérience en progressant dans chaque notion.</p><button type="button" class="primary-button" id="continueBtn">Continuer l'aventure <span>↗</span></button></div>
+        <div class="hero-art" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="hero-terminal"><div class="terminal-top"><span></span><span></span><span></span><i>main.c</i></div><div class="terminal-body"><span class="cm">// Ton prochain défi</span><br><span class="purple">#include</span> <span class="gold">&lt;stdio.h&gt;</span><br><br><span class="pink">int</span> <span class="cyan">main</span>() {<br> &nbsp; <span class="cyan">printf</span>(<span class="green">"Hello, world!"</span>);<br> &nbsp; <span class="pink">return</span> 0;<br>}</div><div class="terminal-badge">✓ Code exécuté</div></div></div>
+      </section>
+
+      <section class="overview" aria-label="Résumé de progression"><div class="metric"><span class="metric-icon metric-blue">✓</span><div><strong id="completedCount">0</strong><span>Défis terminés</span></div></div><div class="metric"><span class="metric-icon metric-violet">⚡</span><div><strong id="totalXp">0</strong><span>XP au total</span></div></div><div class="metric"><span class="metric-icon metric-orange">◈</span><div><strong id="trackPercent">0%</strong><span>Parcours accompli</span></div></div></section>
+
+      <div class="section-intro"><div><div class="eyebrow">À TON RYTHME</div><h2 id="sectionTitle">Ton parcours d'apprentissage</h2><p id="sectionDesc">Valide un défi pour débloquer le suivant.</p></div><div class="progress-total"><div class="progress-label"><span id="progressLabel">0 / 30 terminés</span><span id="progressPercent">0%</span></div><div class="progress-track"><div id="progressFill" class="progress-fill" style="width:0%"></div></div></div></div>
+
+      <div id="pathList" class="path-list"></div>
+      <footer class="footer">CodeQuest C · Projet pédagogique open source · Aucun compte requis · <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub Pages</a></footer>
+    </div>
+  </main>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop" hidden>
+  <section id="challengeModal" class="challenge-modal" role="dialog" aria-modal="true" aria-labelledby="challengeTitle">
+    <div class="modal-head"><div><div class="modal-kicker" id="challengeCategory">LEÇON</div><h2 id="challengeTitle">Titre de l'exercice</h2></div><button type="button" class="close-modal" id="closeModal" aria-label="Fermer l'exercice">×</button></div>
+    <div class="modal-body"><div class="challenge-explainer"><div class="lesson-prompt"><span class="tag">✧ TA MISSION</span><p id="challengePrompt"></p><div class="concept" id="conceptText"></div></div><div class="test-overview"><h3>Tests automatiques</h3><p>Ton programme doit produire exactement le résultat demandé pour chaque entrée. Ne mets pas de message d'invite avant le résultat.</p><div id="testList" class="test-list"></div></div><div class="hint-box"><button type="button" id="hintButton" aria-expanded="false">💡 Voir un indice <span>⌄</span></button><p id="hintText" hidden></p></div></div><div class="workbench"><div class="editor-header"><span>⌘ <b>main.c</b></span><span class="editor-label">C · éditeur local</span></div><textarea id="codeEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Code source C"></textarea><div class="stdin-panel"><label for="stdinInput">ENTRÉE STANDARD (stdin)</label><textarea id="stdinInput" spellcheck="false" rows="2" placeholder="Facultatif : valeurs à lire avec scanf..."></textarea></div><div class="run-toolbar"><button type="button" class="secondary-button" id="runBtn">▶ Exécuter <span class="keyhint">Ctrl + Entrée</span></button><button type="button" class="primary-button check-button" id="checkBtn">✓ Valider le défi</button></div><div class="console-header"><span>● TERMINAL</span><span id="consoleStatus">Prêt</span></div><pre class="console" id="consoleOutput">Clique sur « Exécuter » pour essayer ton programme.</pre><div id="feedback" class="feedback" aria-live="polite"></div></div></div>
+    <div class="modal-foot"><span class="foot-caption" id="saveNotice">Enregistrement automatique dans ton navigateur</span><div class="modal-foot-right"><button type="button" class="text-button" id="restoreBtn">Restaurer le code de départ</button><button type="button" class="next-button" id="nextBtn" hidden>Défi suivant →</button></div></div>
+  </section>
+</div>
+<div id="toast" class="toast" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
