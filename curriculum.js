@@ -67,3 +67,53 @@ const course=specs.map(([module,title,prompt,input,expected],i)=>({id:'c'+String
 const revision=revisions.map(([title,prompt,input,expected],i)=>({id:'r'+String(i+1).padStart(2,'0'),module:'revision',title,prompt,hint:'Commence par identifier les entrées et la sortie attendue.',concept:'Exercice de soutien : retravaille les fondamentaux de la programmation C.',starter,tests:[{input,expected:expected+'\n'}]}));
 return {modules,lessons:{course,revision}};
 })();
+
+// v2 · Practical situations instead of isolated arithmetic operations.
+// Keep lesson IDs unchanged: existing browser progress and backups remain valid.
+const richerExercises = {
+  c05: {
+    title: 'Le budget du déjeuner',
+    prompt: 'Chaque personne achète un sandwich et une boisson. Lis leur prix respectif, puis le nombre de personnes (3 entiers). Affiche le prix total. Exemple : 7 2 3 → 27.',
+    hint: 'Calcule (sandwich + boisson) × personnes.',
+    tests: [['7 2 3','27'], ['6 4 2','20'], ['0 3 5','15']]
+  },
+  c06: {
+    title: 'La monnaie à rendre',
+    prompt: 'À la caisse, lis le prix d’un article et la somme payée (2 entiers, paiement suffisant). Affiche la monnaie à rendre. Exemple : 12 30 → 18.',
+    hint: 'La monnaie est la somme payée moins le prix.',
+    tests: [['12 30','18'], ['25 25','0'], ['14 20','6']]
+  },
+  c07: {
+    title: 'Les places du concert',
+    prompt: 'Une salle a plusieurs rangées de sièges. Lis le nombre de rangées, les places par rangée et les places déjà réservées. Affiche les places encore disponibles. Exemple : 8 12 35 → 61.',
+    hint: 'Commence par calculer la capacité totale.',
+    tests: [['8 12 35','61'], ['3 20 6','54'], ['1 5 5','0']]
+  },
+  c08: {
+    title: 'Partager des bonbons',
+    prompt: 'Lis un nombre de bonbons et un nombre d’enfants (strictement positif). Partage équitablement : affiche le nombre reçu par enfant, puis le nombre restant, séparés par un espace. Exemple : 25 4 → 6 1.',
+    hint: 'Division entière pour la part de chacun, modulo pour le reste.',
+    tests: [['25 4','6 1'], ['24 6','4 0'], ['5 8','0 5']]
+  },
+  c09: {
+    title: 'Un chronomètre en minutes',
+    prompt: 'Lis une durée en secondes (entier positif ou nul). Affiche les minutes complètes et les secondes restantes, séparées par un espace. Exemple : 125 → 2 5.',
+    hint: 'Utilise / 60 et % 60.',
+    tests: [['125','2 5'], ['60','1 0'], ['59','0 59'], ['3601','60 1']]
+  },
+  c10: {
+    title: 'Convertir un temps de trajet',
+    prompt: 'Lis une durée en secondes. Affiche les heures, les minutes restantes puis les secondes restantes, séparées par des espaces. Exemple : 3661 → 1 1 1.',
+    hint: 'Une heure vaut 3600 secondes ; travaille ensuite sur le reste.',
+    tests: [['3661','1 1 1'], ['7325','2 2 5'], ['59','0 0 59'], ['3600','1 0 0']]
+  }
+};
+for (const lesson of curriculum.lessons.course) {
+  lesson.concept = '';
+  const upgrade = richerExercises[lesson.id];
+  if (!upgrade) continue;
+  const { tests, ...rest } = upgrade;
+  Object.assign(lesson, rest, {
+    tests: tests.map(([input, expected]) => ({ input, expected: expected + '\n' }))
+  });
+}
