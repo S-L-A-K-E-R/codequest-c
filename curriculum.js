@@ -100,12 +100,6 @@ const richerExercises = {
     prompt: 'Lis une durée en secondes (entier positif ou nul). Affiche les minutes complètes et les secondes restantes, séparées par un espace. Exemple : 125 → 2 5.',
     hint: 'Utilise / 60 et % 60.',
     tests: [['125','2 5'], ['60','1 0'], ['59','0 59'], ['3601','60 1']]
-  },
-  c10: {
-    title: 'Convertir un temps de trajet',
-    prompt: 'Lis une durée en secondes. Affiche les heures, les minutes restantes puis les secondes restantes, séparées par des espaces. Exemple : 3661 → 1 1 1.',
-    hint: 'Une heure vaut 3600 secondes ; travaille ensuite sur le reste.',
-    tests: [['3661','1 1 1'], ['7325','2 2 5'], ['59','0 0 59'], ['3600','1 0 0']]
   }
 };
 for (const lesson of curriculum.lessons.course) {
