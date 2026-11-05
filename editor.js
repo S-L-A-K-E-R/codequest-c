@@ -8,6 +8,7 @@ export function createCodeEditor({ onChange, onRun }) {
   const cursor = $('editorCursor');
   let editor = null;
   let settingValue = false;
+  let currentTheme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 
   function updateCursor(row, column) {
     cursor.textContent = 'Ln ' + row + ', Col ' + column;
@@ -101,7 +102,7 @@ export function createCodeEditor({ onChange, onRun }) {
       ace.config.set('themePath', basePath);
       editor = ace.edit(host, {
         mode: 'ace/mode/c_cpp',
-        theme: 'ace/theme/tomorrow_night',
+        theme: currentTheme === 'light' ? 'ace/theme/chrome' : 'ace/theme/tomorrow_night',
         fontSize: '16px',
         fontFamily: "Consolas, 'Cascadia Code', 'Fira Code', monospace",
         tabSize: 4,
@@ -179,6 +180,10 @@ export function createCodeEditor({ onChange, onRun }) {
     },
     resize() {
       if (editor) editor.resize(true);
+    },
+    setTheme(theme) {
+      currentTheme = theme === 'light' ? 'light' : 'dark';
+      if (editor) editor.setTheme(currentTheme === 'light' ? 'ace/theme/chrome' : 'ace/theme/tomorrow_night');
     },
     isEnhanced() {
       return !!editor;

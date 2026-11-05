@@ -11,17 +11,25 @@ Application statique, en français, pour la progression et le soutien en program
 - Expérience et suivi : chaque défi réussi rapporte 20 XP, progression et série de jours.
 - **Profil apprenant** accessible depuis l'avatar en haut à droite ou la barre latérale : pseudo local, niveau, titres, badges, statistiques de réussite, suivi des exécutions et validations, progression par chapitre, XP sur 30 jours, activité sur 14 jours, heatmap de 52 semaines et historique des défis terminés.
 - Autosauvegarde dans `localStorage`, export/import JSON (y compris profil et activité quotidienne), reprise de la dernière leçon.
+- Thèmes **clair / sombre**, avec bascule dans l'en-tête et en plein écran pendant les exercices, adaptés à la projection en classe. Le thème de l'éditeur C suit celui du site ; préférence mémorisée localement et indépendante de la progression.
 - Interfaces responsive (ordinateur et mobile), tests pédagogiques et indices.
 
 ## Déploiement sur GitHub Pages (sans build)
 
 1. Créer un **dépôt public**, par exemple `codequest-c` (le compte GitHub Free suffit).
-2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `editor.js`, `profile.js`, `curriculum.js`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
+2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `editor.js`, `profile.js`, `curriculum.js`, `theme.css`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
 3. Aller dans **Settings → Pages → Build and deployment → Source: Deploy from a branch**.
 4. Choisir **Branch: main** et **Folder: /(root)**, puis **Save**.
 5. Ouvrir `https://<UTILISATEUR>.github.io/<DEPOT>/` après la publication. Pour `S-L-A-K-E-R/codequest-c`, l'adresse prévue serait `https://s-l-a-k-e-r.github.io/codequest-c/` (elle ne fonctionnera qu'après déploiement confirmé).
 
 Il n'y a pas besoin de `npm install`, de build ou de GitHub Actions.
+
+## Mode clair et mode sombre
+
+- Bouton **☀ / ☾** à droite du compteur d'XP, ainsi que dans la barre supérieure des défis en plein écran.
+- Le thème clair utilise des surfaces blanches et des contrastes renforcés pour les vidéoprojecteurs ; le thème sombre reprend la présentation d'origine.
+- Le choix est conservé dans `localStorage` sous la clé distincte `codequest-c-theme`, sans modifier les données de progression et sans backend. Le thème sombre est le choix par défaut.
+- Ace passe automatiquement du thème sombre Tomorrow Night au thème clair Chrome, avec une palette proche de VS Code. L'éditeur de secours suit aussi la préférence.
 
 ## Éditeur C (mode IDE)
 

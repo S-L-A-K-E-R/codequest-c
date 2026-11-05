@@ -13,6 +13,25 @@ const codeEditor=createCodeEditor({
  onRun:()=>run()
 });
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch{notify('Stockage local indisponible')}}
+const THEME_KEY='codequest-c-theme';
+function setTheme(theme){
+ const next=theme==='light'?'light':'dark';
+ document.documentElement.dataset.theme=next;
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',next==='light'?'#f3f7fc':'#101c33');
+ codeEditor.setTheme(next);
+ document.querySelectorAll('[data-theme-toggle]').forEach(button=>{
+  const isLight=next==='light',label=isLight?'Mode sombre':'Mode clair';
+  button.setAttribute('aria-label','Passer en '+(isLight?'mode sombre':'mode clair'));
+  button.setAttribute('title','Passer en '+(isLight?'mode sombre':'mode clair'));
+  button.setAttribute('aria-pressed',String(isLight));
+  button.querySelector('[data-theme-icon]').textContent=isLight?'☾':'☀';
+  button.querySelector('[data-theme-label]').textContent=label;
+ });
+ try{localStorage.setItem(THEME_KEY,next)}catch{ /* Theme still works for this visit. */ }
+}
+document.querySelectorAll('[data-theme-toggle]').forEach(button=>button.addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light')));
+setTheme(document.documentElement.dataset.theme);
+
 function today(date=new Date()){return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-')}
 function completed(id){return !!state.completed[id]}
 const requirements={
