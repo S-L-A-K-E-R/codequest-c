@@ -1,10 +1,11 @@
 import {curriculum} from './curriculum.js';
+import {initProfile, getProfileStats} from './profile.js';
 const $=id=>document.getElementById(id),KEY='codequest-c-progress-v1';
 const params=new URLSearchParams(location.search);
 let track=params.get('track')==='revision'?'revision':'course',active=null,busy=false,runner=null;
 const all=[...curriculum.lessons.course,...curriculum.lessons.revision],ids=new Set(all.map(l=>l.id));
-const fresh=()=>({version:1,completed:{},drafts:{},lastActivity:''});
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&typeof s==='object'?{...fresh(),...s}:fresh()}catch{return fresh()}}
+const fresh=()=>({version:2,completed:{},drafts:{},lastActivity:'',daily:{},profile:{name:'Explorateur C'}});
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(!s||typeof s!=='object')return fresh();return {...fresh(),...s,completed:s.completed&&typeof s.completed==='object'?s.completed:{},drafts:s.drafts&&typeof s.drafts==='object'?s.drafts:{},daily:s.daily&&typeof s.daily==='object'?s.daily:{},profile:s.profile&&typeof s.profile==='object'?s.profile:{name:'Explorateur C'}}}catch{return fresh()}}
 let state=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch{notify('Stockage local indisponible')}}
 function today(date=new Date()){return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-')}
@@ -55,7 +56,8 @@ for(const path of document.querySelectorAll('.journey-path')){
 
 function find(id){return all.find(l=>l.id===id)}
 function notify(message){$('toast').textContent=message;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),3500)}
-function streak(){const days=new Set(Object.values(state.completed)),d=new Date();if(!days.has(today(d)))d.setDate(d.getDate()-1);let n=0;while(days.has(today(d))){n++;d.setDate(d.getDate()-1)}return n}
+function streak(){return getProfileStats(state).streak}
+function recordActivity(kind){const key=today();if(!state.daily||typeof state.daily!=='object')state.daily={};if(!state.daily[key]||typeof state.daily[key]!=='object')state.daily[key]={runs:0,checks:0,passed:0};state.daily[key][kind]=(Number(state.daily[key][kind])||0)+1;state.lastActivity=key;save()}
 function updateStats(){const done=curriculum.lessons[track].filter(l=>completed(l.id)).length,allDone=Object.keys(state.completed).filter(id=>ids.has(id)).length,total=curriculum.lessons[track].length,pct=Math.round(done/total*100);
 $('completedCount').textContent=done;$('totalXp').textContent=allDone*20;$('trackPercent').textContent=pct+'%';
 $('xpSidebar').textContent=$('xpTop').textContent=allDone*20;$('streakSidebar').textContent=streak();
@@ -112,10 +114,12 @@ for(const group of groups){
  section.append(path);parent.append(section);
 }
 updateStats();
+if(profileVisible)profileController?.render();
 requestAnimationFrame(drawPathLines);
 }
-function navigate(id=null){const q=new URLSearchParams();if(track==='revision')q.set('track','revision');if(id)q.set('lesson',id);if(params.get('teacher')==='1')q.set('teacher','1');history.replaceState(null,'',location.pathname+(q.size?'?'+q:''))}
+function navigate(id=null){const q=new URLSearchParams();if(profileVisible)q.set('view','profile');if(track==='revision')q.set('track','revision');if(id)q.set('lesson',id);if(params.get('teacher')==='1')q.set('teacher','1');history.replaceState(null,'',location.pathname+(q.size?'?'+q:''))}
 function open(id){const l=find(id);if(!l)return;
+if(profileVisible)setProfileVisible(false);
 track=l.id.startsWith('r')?'revision':'course';if(!unlocked(l)){notify('Complète d’abord les défis prérequis.');return}active=l;render();navigate(id);
 $('challengeCategory').textContent=(track==='revision'?'SOUTIEN · RÉVISION':'PARCOURS C')+' · +20 XP';
 $('challengeTitle').textContent=l.title;$('challengePrompt').textContent=l.prompt;$('conceptText').textContent=l.concept||'';
@@ -131,14 +135,36 @@ async function engine(){if(!runner){const {createRunner}=await import('https://c
 async function execute(code,input){return (await engine()).run({language:'c',code,stdin:input})}
 const normalize=s=>String(s||'').replace(/\r\n/g,'\n').trimEnd();
 function describe(r){return r.error?String(r.error):(r.stdout||'')+(r.stderr?'\n[stderr]\n'+r.stderr:'')||'(Aucune sortie)'}
-async function run(){if(!active||busy)return;setBusy(true);$('consoleOutput').textContent='Chargement du compilateur C et exécution locale…';try{const r=await execute($('codeEditor').value,$('stdinInput').value);$('consoleOutput').textContent=describe(r);$('consoleStatus').textContent=r.exitCode===0?'Exécuté':'Erreur / arrêt'}catch(e){$('consoleOutput').textContent=String(e);$('feedback').className='feedback error';$('feedback').textContent='Échec du compilateur. Connexion nécessaire au premier chargement.'}finally{setBusy(false)}}
+async function run(){if(!active||busy)return;setBusy(true);$('consoleOutput').textContent='Chargement du compilateur C et exécution locale…';try{const r=await execute($('codeEditor').value,$('stdinInput').value);recordActivity('runs');$('consoleOutput').textContent=describe(r);$('consoleStatus').textContent=r.exitCode===0?'Exécuté':'Erreur / arrêt'}catch(e){$('consoleOutput').textContent=String(e);$('feedback').className='feedback error';$('feedback').textContent='Échec du compilateur. Connexion nécessaire au premier chargement.'}finally{setBusy(false)}}
 async function check(){if(!active||busy)return;setBusy(true);$('consoleOutput').textContent='Exécution des tests automatiques…';const results=[];try{
 for(const t of active.tests){const r=await execute($('codeEditor').value,t.input);const ok=!r.error&&!r.timedOut&&!r.truncated&&r.exitCode===0&&normalize(r.stdout)===normalize(t.expected);results.push({ok,r});if(!ok)break}
 tests(results);const passed=results.length===active.tests.length&&results.every(x=>x.ok);
-if(passed){if(!completed(active.id)){state.completed[active.id]=today();state.lastActivity=today();save()}$('feedback').className='feedback success';$('feedback').textContent='Bravo ! Tous les tests sont réussis. +20 XP !';$('nextBtn').hidden=false;$('consoleOutput').textContent='✓ Tous les tests sont réussis.';render()}
+recordActivity('checks');if(passed)recordActivity('passed');
+if(passed){const firstCompletion=!completed(active.id);if(firstCompletion){state.completed[active.id]=today();state.lastActivity=today();save()}$('feedback').className='feedback success';$('feedback').textContent=firstCompletion?'Bravo ! Tous les tests sont réussis. +20 XP !':'Bravo ! Tous les tests sont réussis. Défi déjà validé : XP conservés.';$('nextBtn').hidden=false;$('consoleOutput').textContent='✓ Tous les tests sont réussis.';render()}
 else{$('feedback').className='feedback error';$('feedback').textContent=results.filter(x=>x.ok).length+'/'+active.tests.length+' tests réussis. Continue !';$('consoleOutput').textContent=describe(results.at(-1)?.r||{})+'\nAttendu : '+JSON.stringify(active.tests[results.length-1]?.expected)}
 }catch(e){$('consoleOutput').textContent=String(e);$('feedback').className='feedback error';$('feedback').textContent='Impossible de charger le compilateur.'}finally{setBusy(false)}}
-function change(next){if(active)close();track=next;render();navigate();$('sidebar').classList.remove('is-open')}
+function change(next){if(active)close();setProfileVisible(false);track=next;render();navigate();$('sidebar').classList.remove('is-open')}
+let profileVisible=false,profileController;
+function setProfileVisible(visible){
+ profileVisible=visible;
+ $('coursePage').hidden=visible;
+ $('profilePage').hidden=!visible;
+ $('profileSidebarBtn').classList.toggle('is-current',visible);
+ $('profileTopBtn').classList.toggle('is-current',visible);
+ document.querySelectorAll('[data-track]').forEach(b=>b.classList.toggle('is-selected',!visible&&b.dataset.track===track));
+ $('breadcrumb').textContent=visible?'MON ESPACE / PROFIL':track==='revision'?'SOUTIEN / RÉVISION 1':'APPRENDRE / PARCOURS C';
+ if(visible){profileController.render();window.scrollTo({top:0,behavior:'instant'});}
+ $('sidebar').classList.remove('is-open');
+ navigate();
+}
+profileController=initProfile({
+ getState:()=>state,
+ saveName:name=>{state.profile={...state.profile,name};save();notify('Pseudo enregistré localement')},
+ onOpenChallenge:id=>open(id)
+});
+$('profileSidebarBtn').addEventListener('click',()=>setProfileVisible(true));
+$('profileTopBtn').addEventListener('click',()=>setProfileVisible(true));
+$('profileBackBtn').addEventListener('click',()=>setProfileVisible(false));
 document.querySelectorAll('[data-track]').forEach(b=>b.addEventListener('click',()=>change(b.dataset.track)));
 $('continueBtn').addEventListener('click',()=>open(nextAvailable().id));
 $('closeModal').addEventListener('click',close);$('modalBackdrop').addEventListener('click',e=>{if(e.target===$('modalBackdrop'))close()});
@@ -151,9 +177,9 @@ $('hintButton').addEventListener('click',()=>{$('hintText').hidden=!$('hintText'
 $('restoreBtn').addEventListener('click',()=>{if(active&&confirm('Restaurer le code de départ ?')){$('codeEditor').value=active.starter;state.drafts[active.id]=active.starter;save()}});
 $('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({app:'CodeQuest C',...state},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='codequest-progress.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 $('importBtn').addEventListener('click',()=>$('importFile').click());
-$('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f||f.size>500000)return;try{const obj=JSON.parse(await f.text());if(obj.app!=='CodeQuest C')throw Error();if(!confirm('Remplacer la progression actuelle ?'))return;state=fresh();state.completed=Object.fromEntries(Object.entries(obj.completed||{}).filter(([k,v])=>ids.has(k)&&typeof v==='string'));state.drafts=Object.fromEntries(Object.entries(obj.drafts||{}).filter(([k,v])=>ids.has(k)&&typeof v==='string'&&v.length<60000));save();render();notify('Progression importée')}catch{notify('Sauvegarde invalide')}});
-$('resetBtn').addEventListener('click',()=>{if(confirm('Effacer toute la progression ?')){state=fresh();save();render();notify('Progression réinitialisée')}});
+$('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f||f.size>500000)return;try{const obj=JSON.parse(await f.text());if(obj.app!=='CodeQuest C')throw Error();if(!confirm('Remplacer la progression actuelle ?'))return;state=fresh();state.completed=Object.fromEntries(Object.entries(obj.completed||{}).filter(([k,v])=>ids.has(k)&&typeof v==='string'));state.drafts=Object.fromEntries(Object.entries(obj.drafts||{}).filter(([k,v])=>ids.has(k)&&typeof v==='string'&&v.length<60000));state.daily=Object.fromEntries(Object.entries(obj.daily||{}).filter(([k,v])=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&v&&typeof v==='object').map(([k,v])=>[k,{runs:Math.min(100000,Math.max(0,Math.floor(Number(v.runs)||0))),checks:Math.min(100000,Math.max(0,Math.floor(Number(v.checks)||0))),passed:Math.min(100000,Math.max(0,Math.floor(Number(v.passed)||0)))}]));state.profile={name:typeof obj.profile?.name==='string'?obj.profile.name.trim().slice(0,30)||'Explorateur C':'Explorateur C'};save();render();profileController.refreshShortcut();notify('Progression importée')}catch{notify('Sauvegarde invalide')}});
+$('resetBtn').addEventListener('click',()=>{if(confirm('Effacer toute la progression ?')){state=fresh();save();render();profileController.refreshShortcut();notify('Progression réinitialisée')}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active)close();if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&active){e.preventDefault();run()}});
-render();if(params.get('lesson')&&find(params.get('lesson')))open(params.get('lesson'));
+render();if(params.get('view')==='profile')setProfileVisible(true);else if(params.get('lesson')&&find(params.get('lesson')))open(params.get('lesson'));
 
 window.addEventListener('resize',()=>requestAnimationFrame(drawPathLines));

@@ -16,6 +16,11 @@
       <span class="brand-mark">{ C }</span>
       <span><strong>codequest<span class="brand-accent">.</span></strong><small>PROGRAMMATION C</small></span>
     </a>
+    <button class="sidebar-profile" id="profileSidebarBtn" type="button" aria-label="Ouvrir mon profil">
+      <span class="sidebar-profile-avatar" id="profileSidebarAvatar">E</span>
+      <span class="sidebar-profile-info"><strong id="profileSidebarName">Explorateur C</strong><small>Voir mon profil et mes statistiques</small></span>
+      <span class="sidebar-profile-chevron">›</span>
+    </button>
     <div class="sidebar-label">TON ESPACE</div>
     <nav class="nav" aria-label="Parcours">
       <button type="button" class="nav-link is-selected" data-track="course"><span class="nav-emoji">⌘</span><span>Parcours C</span><span class="nav-right">30</span></button>
@@ -39,11 +44,12 @@
   <main class="main-content">
     <header class="topbar">
       <button class="mobile-menu" id="menuBtn" aria-label="Afficher le menu">☰</button>
+      <button class="top-profile-button" id="profileTopBtn" type="button" title="Mon profil" aria-label="Ouvrir mon profil"><span id="profileTopAvatar">E</span></button>
       <div class="breadcrumb" id="breadcrumb">APPRENDRE / PARCOURS C</div>
       <div class="top-actions"><span class="status-dot"></span> <span class="status-caption">100 % navigateur</span><span class="xp-pill">⚡ <b id="xpTop">0</b> XP</span></div>
     </header>
 
-    <div class="content-inner">
+    <div class="content-inner" id="coursePage">
       <section class="hero">
         <div class="hero-copy"><div class="eyebrow" id="heroEyebrow">TON AVENTURE COMMENCE ICI</div><h1 id="heroTitle">Apprends le C.<br><em>Un défi à la fois.</em></h1><p id="heroDesc">Écris du vrai code, teste tes idées et gagne de l'expérience en progressant dans chaque notion.</p><button type="button" class="primary-button" id="continueBtn">Continuer l'aventure <span>↗</span></button></div>
         <div class="hero-art" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="hero-terminal"><div class="terminal-top"><span></span><span></span><span></span><i>main.c</i></div><div class="terminal-body"><span class="cm">// Ton prochain défi</span><br><span class="purple">#include</span> <span class="gold">&lt;stdio.h&gt;</span><br><br><span class="pink">int</span> <span class="cyan">main</span>() {<br> &nbsp; <span class="cyan">printf</span>(<span class="green">"Hello, world!"</span>);<br> &nbsp; <span class="pink">return</span> 0;<br>}</div><div class="terminal-badge">✓ Code exécuté</div></div></div>
@@ -56,6 +62,45 @@
       <div id="pathList" class="path-list"></div>
       <footer class="footer">CodeQuest C · Projet pédagogique open source · Aucun compte requis · <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub Pages</a></footer>
     </div>
+
+    <section class="profile-page content-inner" id="profilePage" aria-label="Mon profil" hidden>
+      <div class="profile-page-top"><div><div class="eyebrow">TABLEAU DE BORD · CODEQUEST C</div><h1>Ton espace, ton aventure.</h1><p>Chaque défi validé raconte une partie de ta progression.</p></div><button type="button" class="profile-back" id="profileBackBtn">← Retour aux parcours</button></div>
+      <div class="profile-hero-card">
+        <div class="profile-identity"><div class="profile-large-avatar" id="profileAvatar">E</div><div><span class="profile-overline">PROFIL APPRENANT · LOCAL</span><h2 id="profileDisplayName">Explorateur C</h2><p id="profileRank">Apprenti du C</p></div></div>
+        <div class="profile-level-panel"><div class="profile-level-title"><span>NIVEAU <strong id="profileLevel">1</strong></span><span>XP</span></div><div class="profile-level-track"><div id="profileLevelFill"></div></div><small id="profileLevelCaption">0 / 100 XP vers le niveau 2</small></div>
+      </div>
+      <div class="profile-edit-row"><label for="profileNameInput">Ton pseudo <span>(uniquement sur ce navigateur)</span></label><input type="text" id="profileNameInput" maxlength="30" autocomplete="nickname" spellcheck="false" aria-label="Ton pseudo"><button type="button" id="profileSaveName">Enregistrer</button></div>
+
+      <div class="profile-section-caption">VUE D'ENSEMBLE</div>
+      <div class="profile-metrics">
+        <div class="profile-metric"><span>⚡ Expérience</span><strong id="profileMetricXp">0</strong><small>XP cumulés</small></div>
+        <div class="profile-metric"><span>✓ Défis terminés</span><strong id="profileMetricChallenges">0 / 50</strong><small>Parcours et soutien</small></div>
+        <div class="profile-metric"><span>🔥 Série actuelle</span><strong id="profileMetricStreak">0</strong><small>Jours actifs de suite</small></div>
+        <div class="profile-metric"><span>✦ Meilleure série</span><strong id="profileMetricBest">0</strong><small>Record personnel</small></div>
+        <div class="profile-metric"><span>⌘ Code exécuté</span><strong id="profileMetricRuns">0</strong><small>Exécutions manuelles</small></div>
+        <div class="profile-metric"><span>◎ Réussite des tests</span><strong id="profileMetricAccuracy">—</strong><small id="profileAttemptHint">Depuis le suivi des tentatives</small></div>
+      </div>
+
+      <div class="profile-section-heading"><div><div class="profile-section-caption">ÉVOLUTION</div><h2>Les courbes de ton aventure</h2></div><span>Statistiques calculées en local</span></div>
+      <div class="profile-chart-grid">
+        <article class="profile-panel"><div class="profile-panel-heading"><div><h3>Progression de l'XP</h3><p>XP cumulés, 30 derniers jours</p></div><strong class="profile-panel-highlight" id="profileXpPeriod">+0 XP</strong></div><div id="profileXpChart" class="profile-xp-chart"></div></article>
+        <article class="profile-panel"><div class="profile-panel-heading"><div><h3>Activité de programmation</h3><p>Exécutions et validations · 14 jours</p></div></div><div id="profileActivityChart" class="profile-activity-chart"></div><div class="profile-chart-legend"><span><i class="legend-run"></i>Exécutions</span><span><i class="legend-pass"></i>Tests réussis</span><span><i class="legend-fail"></i>Tests à retravailler</span></div></article>
+      </div>
+
+      <article class="profile-panel profile-heatmap-panel"><div class="profile-panel-heading"><div><h3>La carte de ton engagement</h3><p>Ton activité au fil des 52 dernières semaines · survole les cases pour le détail</p></div><strong id="profileActiveDays">0 jours actifs</strong></div><div class="heatmap-scroll"><div class="heatmap-layout"><div class="heatmap-weekdays"><span>Lun</span><span></span><span>Mer</span><span></span><span>Ven</span><span></span><span>Dim</span></div><div id="profileHeatmap"></div></div></div><div class="profile-heatmap-footer"><span>Un jour actif = au moins un défi terminé, un lancement ou une validation</span><div class="heatmap-legend">Moins <i class="heatmap-level-0"></i><i class="heatmap-level-1"></i><i class="heatmap-level-2"></i><i class="heatmap-level-3"></i><i class="heatmap-level-4"></i> Plus</div></div></article>
+
+      <div class="profile-section-heading"><div><div class="profile-section-caption">TON APPRENTISSAGE</div><h2>Les compétences que tu construis</h2></div></div>
+      <div class="profile-progress-cards">
+        <div class="profile-track-card"><div><strong>⌘ Parcours principal</strong><span id="profileCourseCount">0 / 30</span></div><p>Progresse dans les sept notions fondamentales.</p><div class="profile-track-bar"><span id="profileCourseFill"></span></div></div>
+        <div class="profile-track-card"><div><strong>◎ Soutien & révision</strong><span id="profileRevisionCount">0 / 20</span></div><p>Consolide tes bases grâce aux exercices libres.</p><div class="profile-track-bar"><span id="profileRevisionFill"></span></div></div>
+      </div>
+      <div class="profile-bottom-grid">
+        <article class="profile-panel"><div class="profile-panel-heading"><div><h3>Maîtrise par chapitre</h3><p>Progression dans chacun des 7 chapitres</p></div></div><div id="profileModules" class="profile-modules"></div></article>
+        <article class="profile-panel"><div class="profile-panel-heading"><div><h3>Collection de badges</h3><p>Des petits exploits pour de grandes étapes</p></div><strong id="profileBadgesCount">0 / 12</strong></div><div id="profileBadges" class="profile-badges"></div></article>
+      </div>
+      <article class="profile-panel profile-recent-panel"><div class="profile-panel-heading"><div><h3>Dernières victoires</h3><p>Retrouve les exercices que tu as terminés</p></div></div><div id="profileRecent"></div></article>
+      <p class="profile-privacy">🔒 Toutes ces données sont conservées dans ce navigateur. Elles sont incluses dans l’export JSON. Aucune connexion ni aucun serveur de suivi n’est nécessaire.</p>
+    </section>
   </main>
 </div>
 

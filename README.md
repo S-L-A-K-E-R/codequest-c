@@ -9,18 +9,27 @@ Application statique, en français, pour la progression et le soutien en program
 - Code C dans un éditeur, avec `stdin`, sortie console et validation de des tests automatiques.
 - Exécution entièrement **dans le navigateur**, dans un moteur C/WASM isolé (`@browserrun/sandrun`, moteur `xcc`). Aucun code source d'élève n'est transmis à un serveur de compilation.
 - Expérience et suivi : chaque défi réussi rapporte 20 XP, progression et série de jours.
-- Autosauvegarde dans `localStorage`, export/import JSON, reprise de la dernière leçon.
+- **Profil apprenant** accessible depuis l'avatar en haut à gauche ou la barre latérale : pseudo local, niveau, titres, badges, statistiques de réussite, suivi des exécutions et validations, progression par chapitre, XP sur 30 jours, activité sur 14 jours, heatmap de 52 semaines et historique des défis terminés.
+- Autosauvegarde dans `localStorage`, export/import JSON (y compris profil et activité quotidienne), reprise de la dernière leçon.
 - Interfaces responsive (ordinateur et mobile), tests pédagogiques et indices.
 
 ## Déploiement sur GitHub Pages (sans build)
 
 1. Créer un **dépôt public**, par exemple `codequest-c` (le compte GitHub Free suffit).
-2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `curriculum.js`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
+2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `profile.js`, `curriculum.js`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
 3. Aller dans **Settings → Pages → Build and deployment → Source: Deploy from a branch**.
 4. Choisir **Branch: main** et **Folder: /(root)**, puis **Save**.
 5. Ouvrir `https://<UTILISATEUR>.github.io/<DEPOT>/` après la publication. Pour `S-L-A-K-E-R/codequest-c`, l'adresse prévue serait `https://s-l-a-k-e-r.github.io/codequest-c/` (elle ne fonctionnera qu'après déploiement confirmé).
 
 Il n'y a pas besoin de `npm install`, de build ou de GitHub Actions.
+
+## Profil et statistiques
+
+- Ouvrir le profil avec l'avatar en haut à gauche ou le bouton de profil de la barre latérale. Lien direct : `?view=profile`.
+- Les défis restent l'unique source des XP (**20 XP par défi unique validé**). Revalider un défi ne rapporte pas de nouveaux XP.
+- Les exécutions manuelles et les validations automatiques réussies ou échouées sont comptées **uniquement à partir de cette version**. Les anciennes dates de fin de défi restent visibles dans la heatmap, mais les anciennes exécutions ne peuvent pas être reconstruites.
+- Les données du profil sont intégrées aux exports JSON et restaurées à l'import. L'import d'un ancien export sans profil est pris en charge.
+- Il n'y a ni compte en ligne, ni classement entre élèves, ni synchronisation entre appareils. Le profil est une visualisation ludique de données propres au navigateur et non un outil de notation.
 
 ## Pour une séance de soutien
 
@@ -53,7 +62,7 @@ Le moteur léger `xcc` couvre l'essentiel de C99/C11 mais n'est pas identique à
 
 ## Confidentialité et limites
 
-- `localStorage` se trouve dans **chaque navigateur et profil**, jamais sur GitHub. L'application ne fait pas de synchronisation entre appareils.
+- `localStorage` se trouve dans **chaque navigateur et profil**, jamais sur GitHub. Le profil ne demande aucun compte ; son pseudo et ses graphiques sont locaux. Les sauvegardes antérieures sont compatibles : les défis déjà terminés sont conservés et le suivi des exécutions et validations commence à partir de l'ajout du profil. L'application ne fait pas de synchronisation entre appareils.
 - En navigation privée, ou si le stockage est bloqué, la sauvegarde peut être perdue.
 - GitHub Pages est un service public et GitHub peut journaliser des données réseau normales, notamment l'adresse IP. Le CDN du moteur reçoit les requêtes de chargement du moteur, **pas le code saisi**.
 - Pas de backend, pas de compte ni de suivi professeur. Impossible de consulter les scores de tous les élèves sans introduire un service supplémentaire ou un export manuel.
