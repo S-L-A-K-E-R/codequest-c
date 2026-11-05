@@ -6,22 +6,30 @@ Application statique, en français, pour la progression et le soutien en program
 
 - Parcours progressif : **30 défis** dans 7 chapitres (entrées/sorties, variables, conditions, `while`, `for`, tableaux/chaînes, fonctions).
 - Parcours indépendant **Soutien · Révision 1 : 20 exercices** accessibles dans n'importe quel ordre.
-- Code C dans un éditeur, avec `stdin`, sortie console et validation de des tests automatiques.
+- Code C dans un éditeur inspiré de VS Code (Ace) : coloration syntaxique C, numéros de ligne, indentation automatique, paires de parenthèses/accolades/guillemets, saisie par-dessus les délimiteurs, correspondance des parenthèses, guides d'indentation et raccourcis clavier. Avec `stdin`, sortie console et validation par des tests automatiques.
 - Exécution entièrement **dans le navigateur**, dans un moteur C/WASM isolé (`@browserrun/sandrun`, moteur `xcc`). Aucun code source d'élève n'est transmis à un serveur de compilation.
 - Expérience et suivi : chaque défi réussi rapporte 20 XP, progression et série de jours.
-- **Profil apprenant** accessible depuis l'avatar en haut à gauche ou la barre latérale : pseudo local, niveau, titres, badges, statistiques de réussite, suivi des exécutions et validations, progression par chapitre, XP sur 30 jours, activité sur 14 jours, heatmap de 52 semaines et historique des défis terminés.
+- **Profil apprenant** accessible depuis l'avatar en haut à droite ou la barre latérale : pseudo local, niveau, titres, badges, statistiques de réussite, suivi des exécutions et validations, progression par chapitre, XP sur 30 jours, activité sur 14 jours, heatmap de 52 semaines et historique des défis terminés.
 - Autosauvegarde dans `localStorage`, export/import JSON (y compris profil et activité quotidienne), reprise de la dernière leçon.
 - Interfaces responsive (ordinateur et mobile), tests pédagogiques et indices.
 
 ## Déploiement sur GitHub Pages (sans build)
 
 1. Créer un **dépôt public**, par exemple `codequest-c` (le compte GitHub Free suffit).
-2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `profile.js`, `curriculum.js`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
+2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `editor.js`, `profile.js`, `curriculum.js`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
 3. Aller dans **Settings → Pages → Build and deployment → Source: Deploy from a branch**.
 4. Choisir **Branch: main** et **Folder: /(root)**, puis **Save**.
 5. Ouvrir `https://<UTILISATEUR>.github.io/<DEPOT>/` après la publication. Pour `S-L-A-K-E-R/codequest-c`, l'adresse prévue serait `https://s-l-a-k-e-r.github.io/codequest-c/` (elle ne fonctionnera qu'après déploiement confirmé).
 
 Il n'y a pas besoin de `npm install`, de build ou de GitHub Actions.
+
+## Éditeur C (mode IDE)
+
+L'éditeur repose sur **Ace Editor 1.45.2** (scripts versionnés chargés depuis jsDelivr), avec le mode C/C++ et une palette inspirée de **VS Code Dark+**. Il apporte indentation après `{`, conservation du niveau d'indentation sur les nouvelles lignes, paires automatiques `()`, `{}`, `[]`, `""` et `''`, passage sur les délimiteurs déjà présents, coloration syntaxique, numéros de ligne, sélection et annulation. `Tab` utilise quatre espaces. **Ctrl+Entrée** (ou **Cmd+Entrée** sur Mac) exécute le code.
+
+Lors d'un premier chargement, la connexion réseau est nécessaire pour obtenir Ace. Si la bibliothèque est indisponible, une zone de saisie enrichie basique prend le relais (indentation, paires et passage sur délimiteurs). Comme le compilateur, l'éditeur fonctionne ensuite **localement dans le navigateur** : le code source n'est pas envoyé au CDN.
+
+Les brouillons existants continuent de fonctionner avec la même clé `localStorage` et les exports JSON sont inchangés.
 
 ## Profil et statistiques
 
