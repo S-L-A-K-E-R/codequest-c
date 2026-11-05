@@ -366,3 +366,51 @@
  .profile-recent-xp{font-size:10px}
  .profile-revisit{padding:6px 8px}
 }
+
+
+/* IDE-style challenge editor: VS Code Dark+ inspired C token palette. */
+.editor-header{gap:14px;min-height:43px}
+.editor-status{display:flex;align-items:center;justify-content:flex-end;gap:18px;color:#9caec8;font:11px/1.2 Consolas,'Cascadia Code',monospace;white-space:nowrap}
+.editor-language{display:inline-grid;place-items:center;background:#2452a0;color:#fff;border-radius:5px;min-width:24px;padding:4px 7px;font-weight:800}
+#aceEditor{
+  position:relative;
+  flex:1 1 auto;
+  min-width:0;
+  min-height:250px;
+  height:100%;
+  width:100%;
+  overflow:hidden;
+  background:#1e1e1e;
+  font:16px/1.6 Consolas,'Cascadia Code','Fira Code',monospace;
+}
+#aceEditor.ace-tomorrow-night{background:#1e1e1e;color:#d4d4d4}
+#aceEditor.ace-tomorrow-night .ace_scroller{background:#1e1e1e}
+#aceEditor.ace-tomorrow-night .ace_gutter{background:#181818;color:#858585;border-right:1px solid #2c2c2c}
+#aceEditor.ace-tomorrow-night .ace_gutter-active-line{background:#292929}
+#aceEditor.ace-tomorrow-night .ace_marker-layer .ace_active-line{background:#ffffff08}
+#aceEditor.ace-tomorrow-night .ace_marker-layer .ace_selection{background:#264f78}
+#aceEditor.ace-tomorrow-night .ace_cursor{color:#aeafad}
+#aceEditor.ace-tomorrow-night .ace_indent-guide{opacity:.42}
+#aceEditor.ace-tomorrow-night .ace_keyword,
+#aceEditor.ace-tomorrow-night .ace_storage{color:#569cd6}
+#aceEditor.ace-tomorrow-night .ace_storage.ace_type,
+#aceEditor.ace-tomorrow-night .ace_support.ace_type{color:#4ec9b0}
+#aceEditor.ace-tomorrow-night .ace_string{color:#ce9178}
+#aceEditor.ace-tomorrow-night .ace_comment{color:#6a9955;font-style:normal}
+#aceEditor.ace-tomorrow-night .ace_constant.ace_numeric,
+#aceEditor.ace-tomorrow-night .ace_constant.ace_language{color:#b5cea8}
+#aceEditor.ace-tomorrow-night .ace_support.ace_function,
+#aceEditor.ace-tomorrow-night .ace_entity.ace_name.ace_function{color:#dcdcaa}
+#aceEditor.ace-tomorrow-night .ace_variable{color:#9cdcfe}
+#aceEditor.ace-tomorrow-night .ace_meta.ace_preprocessor,
+#aceEditor.ace-tomorrow-night .ace_meta.ace_preprocessor .ace_keyword{color:#c586c0}
+#aceEditor.ace-tomorrow-night .ace_marker-layer .ace_bracket{border:1px solid #9a9a9a;background:#ffffff0f}
+#codeEditor{background:#1e1e1e;color:#d4d4d4}
+@media(max-width:720px){
+  #aceEditor{min-height:125px;font-size:14px}
+  .editor-header{padding:9px 12px;min-height:36px}
+  .editor-status{gap:9px;font-size:10px}
+}
+@media(max-width:420px){
+  .editor-status>span:nth-child(2){display:none}
+}
