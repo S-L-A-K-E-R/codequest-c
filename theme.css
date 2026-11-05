@@ -1,0 +1,202 @@
+/* CodeQuest C — projector-friendly light mode and shared theme controls.
+   Dark mode remains the original default, with no visual regression. */
+.theme-toggle{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:1px solid #405d87;border-radius:11px;
+  padding:8px 11px;background:#1e3352;color:#dceaff;
+  font-size:12px;font-weight:750;line-height:1.2;white-space:nowrap;cursor:pointer;
+  transition:background .15s,border-color .15s,box-shadow .15s;
+}
+.theme-toggle:hover{background:#2a4873;border-color:#8faeff}
+.theme-toggle:focus-visible{outline:3px solid #7aa5ff;outline-offset:3px}
+.theme-toggle-icon{font-size:18px;line-height:1}
+.modal-head-actions{display:flex;align-items:center;gap:12px}
+@media(max-width:900px){.topbar .theme-toggle-text{display:none}.topbar .theme-toggle{padding:7px 9px}}
+@media(max-width:480px){.theme-toggle-modal .theme-toggle-text{display:none}.modal-head-actions{gap:8px}}
+
+/* Bright neutral surfaces and saturated blue accents, readable on projectors. */
+html[data-theme="light"]{color-scheme:light;color:#17243b;background:#f3f7fc}
+html[data-theme="light"] body{background:#f3f7fc;color:#17243b}
+html[data-theme="light"] .app-shell,html[data-theme="light"] .main-content{background:#f3f7fc;color:#17243b}
+html[data-theme="light"] .sidebar{background:#fff;border-color:#d6e1f0;color:#17243b}
+html[data-theme="light"] .brand{color:#17243b}
+html[data-theme="light"] .brand small,
+html[data-theme="light"] .sidebar-label,
+html[data-theme="light"] .nav-right{color:#516581}
+html[data-theme="light"] .sidebar-profile{background:linear-gradient(120deg,#eaf2ff,#f3f7ff);color:#172b51;border-color:#c9dafa}
+html[data-theme="light"] .sidebar-profile:hover,
+html[data-theme="light"] .sidebar-profile.is-current{background:#dceafe;border-color:#5685d6}
+html[data-theme="light"] .sidebar-profile-info small,
+html[data-theme="light"] .sidebar-profile-chevron{color:#48658e}
+html[data-theme="light"] .sidebar-divider{border-color:#dae3ef}
+html[data-theme="light"] .nav-link{color:#324862}
+html[data-theme="light"] .nav-link:hover,
+html[data-theme="light"] .nav-link.is-selected{background:#e4eeff;color:#174c99}
+html[data-theme="light"] .mini-stats small,
+html[data-theme="light"] .privacy-note{color:#526783}
+html[data-theme="light"] .utility-btn{background:#f8faff;color:#284465;border-color:#ced9e7}
+html[data-theme="light"] .utility-btn:hover{background:#e9f2ff}
+html[data-theme="light"] .utility-btn.danger{color:#aa293b}
+html[data-theme="light"] .topbar{background:#fff;border-color:#d6e1f0}
+html[data-theme="light"] .breadcrumb,
+html[data-theme="light"] .status-caption{color:#536883}
+html[data-theme="light"] .xp-pill{background:#fff0c9;color:#87520e}
+html[data-theme="light"] .theme-toggle{background:#ebf2fd;border-color:#bfcee5;color:#274a80}
+html[data-theme="light"] .theme-toggle:hover{background:#dbe9ff;border-color:#6189c9}
+html[data-theme="light"] .hero{background:linear-gradient(125deg,#f0f6ff,#dbe9ff);border-color:#c6d9f3}
+html[data-theme="light"] .eyebrow,
+html[data-theme="light"] .modal-kicker,
+html[data-theme="light"] .profile-section-caption,
+html[data-theme="light"] .profile-overline{color:#2659a9}
+html[data-theme="light"] .hero h1,
+html[data-theme="light"] .hero h1 em{color:#183d78}
+html[data-theme="light"] .hero p,
+html[data-theme="light"] .section-intro p{color:#435a79}
+html[data-theme="light"] .hero-terminal{background:#1e293e;border-color:#526884;color:#e8f3ff}
+html[data-theme="light"] .terminal-top{background:#33445f}
+html[data-theme="light"] .hero-terminal .cm{color:#b6c8dc}
+html[data-theme="light"] .hero-terminal .purple{color:#c5a0fa}
+html[data-theme="light"] .hero-terminal .gold{color:#ffdf98}
+html[data-theme="light"] .hero-terminal .pink{color:#ffaac5}
+html[data-theme="light"] .hero-terminal .cyan{color:#94dcfa}
+html[data-theme="light"] .hero-terminal .green{color:#b9ecae}
+html[data-theme="light"] .metric,
+html[data-theme="light"] .module-block{background:#fff;border-color:#d5e1f0}
+html[data-theme="light"] .metric strong,
+html[data-theme="light"] .section-intro h2,
+html[data-theme="light"] .module-heading h3{color:#172b4b}
+html[data-theme="light"] .metric span:last-child,
+html[data-theme="light"] .module-heading p,
+html[data-theme="light"] .module-count,
+html[data-theme="light"] .progress-label{color:#526785}
+html[data-theme="light"] .metric-icon{background:#e1edff;color:#245aab}
+html[data-theme="light"] .progress-track{background:#dbe5f1}
+html[data-theme="light"] .lesson-node{background:#f3f7ff;border-color:#cad8ed;color:#263d5b}
+html[data-theme="light"] .lesson-node:not(:disabled):hover{background:#e3eeff;border-color:#588ad2}
+html[data-theme="light"] .lesson-info small{color:#506a87}
+html[data-theme="light"] .journey-row .lesson-node{background:transparent;color:#213452}
+html[data-theme="light"] .journey-row .lesson-node:not(:disabled):hover{background:transparent}
+html[data-theme="light"] .journey-row .lesson-node.is-locked .lesson-symbol{background:#c6d3e4;border-color:#a5b9d3;color:#364e70}
+html[data-theme="light"] .journey-row .lesson-node.is-locked{opacity:.78}
+html[data-theme="light"] .journey-row .lesson-node.is-locked .lesson-info strong{color:#47607f}
+html[data-theme="light"] .path-line:not(.is-earned){stroke:#c2cfe0}
+html[data-theme="light"] .footer{color:#506681}
+
+/* Learner profile, stats, graphs, badges, and heatmap. */
+html[data-theme="light"] .profile-page{color:#192c48}
+html[data-theme="light"] .profile-page-top p,
+html[data-theme="light"] .profile-panel p,
+html[data-theme="light"] .profile-track-card p{color:#536986}
+html[data-theme="light"] .profile-back{background:#e9f1ff;border-color:#b9cde8;color:#234e85}
+html[data-theme="light"] .profile-back:hover{background:#d9e9ff}
+html[data-theme="light"] .profile-hero-card{background:linear-gradient(125deg,#e8f2ff,#cedffc);border-color:#bad0f2;box-shadow:0 10px 28px #153a6b13}
+html[data-theme="light"] .profile-identity h2,
+html[data-theme="light"] .profile-page-top h1{color:#18365d}
+html[data-theme="light"] .profile-identity p,
+html[data-theme="light"] .profile-level-title,
+html[data-theme="light"] .profile-level-panel small{color:#435f84}
+html[data-theme="light"] .profile-level-title strong{color:#1b497f}
+html[data-theme="light"] .profile-level-track{background:#cadcf5}
+html[data-theme="light"] .profile-edit-row label{color:#334b69}
+html[data-theme="light"] .profile-edit-row label span{color:#5c708e}
+html[data-theme="light"] .profile-edit-row input{background:#fff;border-color:#b9cae1;color:#18314e}
+html[data-theme="light"] .profile-metric,
+html[data-theme="light"] .profile-panel,
+html[data-theme="light"] .profile-track-card{background:#fff;border-color:#d4e0ef}
+html[data-theme="light"] .profile-metric>span,
+html[data-theme="light"] .profile-metric small,
+html[data-theme="light"] .profile-section-heading>span{color:#536b89}
+html[data-theme="light"] .profile-metric strong,
+html[data-theme="light"] .profile-section-heading h2,
+html[data-theme="light"] .profile-panel-heading h3{color:#172d4e}
+html[data-theme="light"] .profile-panel-heading strong{color:#275a96}
+html[data-theme="light"] .profile-line-svg text{fill:#526783}
+html[data-theme="light"] .profile-line-svg line{stroke:#dae3ef}
+html[data-theme="light"] .profile-activity-chart{border-color:#dce5ef}
+html[data-theme="light"] .profile-chart-legend span,
+html[data-theme="light"] .profile-heatmap-footer,
+html[data-theme="light"] .heatmap-months,
+html[data-theme="light"] .heatmap-weekdays{color:#536b89}
+html[data-theme="light"] .heatmap-level-0{background:#e5edf6!important}
+html[data-theme="light"] .heatmap-level-1{background:#bad5f1!important}
+html[data-theme="light"] .heatmap-level-2{background:#82b8e6!important}
+html[data-theme="light"] .heatmap-level-3{background:#448cd3!important}
+html[data-theme="light"] .heatmap-level-4{background:#185aa5!important}
+html[data-theme="light"] .heatmap-cell:hover{outline-color:#123f87}
+html[data-theme="light"] .profile-track-card>div:first-child,
+html[data-theme="light"] .profile-module-heading,
+html[data-theme="light"] .profile-recent-item strong{color:#273f5e}
+html[data-theme="light"] .profile-track-card>div:first-child span,
+html[data-theme="light"] .profile-module-heading strong{color:#2b5d9e}
+html[data-theme="light"] .profile-track-bar,
+html[data-theme="light"] .profile-module-track{background:#e0e8f3}
+html[data-theme="light"] .profile-badge{background:#eef4fc;border-color:#c7d8ed;color:#20395a}
+html[data-theme="light"] .profile-badge.is-earned{background:#e4f0ff;border-color:#80a6d8}
+html[data-theme="light"] .profile-badge-icon{background:#d2e5ff}
+html[data-theme="light"] .profile-badge small,
+html[data-theme="light"] .profile-recent-item small,
+html[data-theme="light"] .profile-privacy,
+html[data-theme="light"] .profile-empty{color:#526b88}
+html[data-theme="light"] .profile-recent-item{border-color:#d9e5f2}
+html[data-theme="light"] .profile-recent-icon{background:#d7f1e8;color:#126544}
+html[data-theme="light"] .profile-recent-xp{color:#126747}
+
+/* Fullscreen challenge: a whiteboard-like bright workbench. */
+html[data-theme="light"] .modal-backdrop{background:#f4f7fc}
+html[data-theme="light"] .challenge-modal{background:#fff;color:#192b47;border-color:#d2deee}
+html[data-theme="light"] .modal-head{background:#fff;border-color:#d9e3f0}
+html[data-theme="light"] .modal-head h2{color:#183456}
+html[data-theme="light"] .close-modal{background:#e5eef9;color:#254768}
+html[data-theme="light"] .close-modal:hover{background:#d7e5f5}
+html[data-theme="light"] .challenge-explainer{background:#f4f8ff;border-color:#d6e3f1}
+html[data-theme="light"] .lesson-prompt{background:#fff;border-color:#c1d6ef;border-left-color:#3b76c6;box-shadow:0 8px 20px #123a6914}
+html[data-theme="light"] .lesson-prompt p{color:#162f51}
+html[data-theme="light"] .tag{color:#2a5ca6}
+html[data-theme="light"] .concept{background:#e8f0fb;color:#3d5b7c}
+html[data-theme="light"] .test-overview{background:#fff;border-color:#d0ddec;color:#3a5575}
+html[data-theme="light"] .test-overview summary{color:#3b5477}
+html[data-theme="light"] .test-item{background:#ebf3ff;color:#29456b}
+html[data-theme="light"] .test-item.is-pass{color:#126744;background:#dcf6e9}
+html[data-theme="light"] .test-item.is-fail{color:#a32140;background:#ffe7eb}
+html[data-theme="light"] .hint-box button{color:#5b3ea8}
+html[data-theme="light"] .hint-box p{color:#415d7b}
+html[data-theme="light"] .workbench{background:#fff}
+html[data-theme="light"] .editor-header,
+html[data-theme="light"] .console-header{background:#eef3fb;color:#344d71}
+html[data-theme="light"] .editor-status{color:#536b86}
+html[data-theme="light"] .stdin-panel{background:#f1f5fc}
+html[data-theme="light"] .stdin-panel label{color:#4c6483}
+html[data-theme="light"] #stdinInput{background:#fff;color:#203553;border-color:#becfe4}
+html[data-theme="light"] .run-toolbar{background:#eef3fa}
+html[data-theme="light"] .secondary-button{background:#e4ecf8;border-color:#b6c9e0;color:#264d7a}
+html[data-theme="light"] .secondary-button:hover{background:#d8e7f9}
+html[data-theme="light"] .keyhint{color:#58739b}
+html[data-theme="light"] .console{background:#f6f8fc;color:#213d56;border-top:1px solid #dce5ef}
+html[data-theme="light"] .feedback{background:#fff;color:#48617f}
+html[data-theme="light"] .feedback.success{color:#126442}
+html[data-theme="light"] .feedback.error{color:#aa2941}
+html[data-theme="light"] .modal-foot{background:#f5f8fe;border-color:#d6e1ee}
+html[data-theme="light"] .foot-caption,
+html[data-theme="light"] .text-button{color:#4c6584}
+html[data-theme="light"] .toast{background:#f5f9ff;border-color:#b5c8e5;color:#23466e;box-shadow:0 8px 30px #142d4926}
+html[data-theme="light"] #codeEditor{background:#fff;color:#24292f}
+html[data-theme="light"] #aceEditor,
+html[data-theme="light"] #aceEditor.ace-chrome{background:#fff;color:#24292f}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_scroller{background:#fff}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_gutter{background:#f4f6fa;color:#58677e;border-right:1px solid #dfe6ef}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_gutter-active-line{background:#e6edfb}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_marker-layer .ace_active-line{background:#edf4ff}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_marker-layer .ace_selection{background:#bad7ff}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_cursor{color:#202e42}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_keyword,
+html[data-theme="light"] #aceEditor.ace-chrome .ace_storage{color:#0000aa}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_storage.ace_type,
+html[data-theme="light"] #aceEditor.ace-chrome .ace_support.ace_type{color:#267f99}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_string{color:#a31515}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_comment{color:#008000}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_constant.ace_numeric{color:#098658}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_support.ace_function,
+html[data-theme="light"] #aceEditor.ace-chrome .ace_entity.ace_name.ace_function{color:#795e26}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_variable{color:#001080}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_meta.ace_preprocessor{color:#af00db}
+html[data-theme="light"] #aceEditor.ace-chrome .ace_marker-layer .ace_bracket{border:1px solid #8796b2;background:#eaf1fc}
