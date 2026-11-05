@@ -166,7 +166,7 @@ function drawHeatmap(stats, now) {
   const months = document.createElement('div');
   months.className = 'heatmap-months';
   const base = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
-  const endWeek = offsetDay(base, -(base.getDay() + 6) % 7);
+  const endWeek = offsetDay(base, -((base.getDay() + 6) % 7));
   const firstMonday = offsetDay(endWeek, -51 * 7);
   const monthNames = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
   let lastMonth = -1;
