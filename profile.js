@@ -36,7 +36,7 @@ export function getProfileStats(progress, now = new Date()) {
     const entry = day(date);
     if (!entry) continue;
     entry.completed++;
-    entry.xp += 20;
+    entry.xp += lessonById.get(id)?.kind==='gold'?60:lessonById.get(id)?.kind==='side'?30:20;
     finished.push({ id, date, lesson: lessonById.get(id) });
   }
   for (const [date, events] of Object.entries(daily)) {
@@ -67,12 +67,12 @@ export function getProfileStats(progress, now = new Date()) {
     bestStreak = Math.max(bestStreak, consecutive);
     previous = key;
   }
-  const courseCount = finished.filter(item => item.id.startsWith('c')).length;
+  const courseCount = finished.filter(item => item.id.startsWith('c') || item.id.startsWith('g')).length;
   const revisionCount = finished.filter(item => item.id.startsWith('r')).length;
   const checks = [...byDay.values()].reduce((sum, e) => sum + e.checks, 0);
   const passed = [...byDay.values()].reduce((sum, e) => sum + e.passed, 0);
   const runs = [...byDay.values()].reduce((sum, e) => sum + e.runs, 0);
-  const xp = finished.length * 20;
+  const xp = [...byDay.values()].reduce((sum,entry)=>sum+entry.xp,0);
   const level = Math.floor(xp / 100) + 1;
   return {
     byDay, activeDays, finished, courseCount, revisionCount,
@@ -92,7 +92,7 @@ const badges = [
   { icon: '☀', title: 'Régularité', desc: 'Atteindre 3 jours consécutifs', test: s => s.bestStreak >= 3 },
   { icon: '🔥', title: 'Série de feu', desc: 'Atteindre 7 jours consécutifs', test: s => s.bestStreak >= 7 },
   { icon: '💎', title: '100 XP', desc: 'Gagner au moins 100 XP', test: s => s.xp >= 100 },
-  { icon: '🎓', title: 'Maître du parcours', desc: 'Terminer les 30 défis du parcours C', test: s => s.courseCount === 30 },
+  { icon: '🎓', title: 'Maître du parcours', desc: 'Terminer les 30 défis classiques du parcours C', test: s => s.courseCount >= 30 },
   { icon: '✍', title: 'Révisions au top', desc: 'Terminer les 20 exercices de soutien', test: s => s.revisionCount === 20 },
   { icon: '⌨', title: 'Explorateur du code', desc: 'Exécuter ton code 50 fois', test: s => s.runs >= 50 },
   { icon: '🛠', title: 'Persévérance', desc: 'Faire 10 validations non réussies', test: s => s.checks - s.passed >= 10 }
@@ -271,7 +271,7 @@ function drawRecent(stats, onOpenChallenge) {
     summary.append(title, detail);
     const points = document.createElement('span');
     points.className = 'profile-recent-xp';
-    points.textContent = '+20 XP';
+    points.textContent = '+' + (item.lesson.kind==='gold'?60:item.lesson.kind==='side'?30:20) + ' XP';
     const revisit = document.createElement('button');
     revisit.type = 'button';
     revisit.textContent = 'Revoir';
@@ -301,9 +301,9 @@ export function initProfile({ getState, saveName, onOpenChallenge }) {
     $('profileMetricBest').textContent = stats.bestStreak;
     $('profileMetricRuns').textContent = stats.runs;
     $('profileMetricAccuracy').textContent = stats.accuracy === null ? '—' : stats.accuracy + '%';
-    $('profileCourseCount').textContent = stats.courseCount + ' / 30';
+    $('profileCourseCount').textContent = stats.courseCount + ' / ' + curriculum.lessons.course.length;
     $('profileRevisionCount').textContent = stats.revisionCount + ' / 20';
-    $('profileCourseFill').style.width = stats.courseCount / 30 * 100 + '%';
+    $('profileCourseFill').style.width = stats.courseCount / curriculum.lessons.course.length * 100 + '%';
     $('profileRevisionFill').style.width = stats.revisionCount / 20 * 100 + '%';
     $('profileAttemptHint').textContent = stats.checks ? stats.passed + ' validations réussies sur ' + stats.checks + ' tentatives' : 'Les tentatives seront comptabilisées à partir de maintenant';
     drawXpChart(stats, new Date());
