@@ -1,10 +1,13 @@
 import {curriculum} from './curriculum.js';
 import {initProfile, getProfileStats} from './profile.js';
 import {createCodeEditor} from './editor.js';
+import {initLearning} from './learning.js';
 const $=id=>document.getElementById(id),KEY='codequest-c-progress-v1';
 const params=new URLSearchParams(location.search);
 let track=params.get('track')==='revision'?'revision':'course',active=null,busy=false,runner=null;
 const all=[...curriculum.lessons.course,...curriculum.lessons.revision],ids=new Set(all.map(l=>l.id));
+const xpFor=l=>l?.kind==='gold'?60:l?.kind==='side'?30:20;
+const xpTotal=()=>Object.keys(state.completed).reduce((sum,id)=>sum+(ids.has(id)?xpFor(find(id)):0),0);
 const fresh=()=>({version:2,completed:{},drafts:{},lastActivity:'',daily:{},profile:{name:'Explorateur C'}});
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(!s||typeof s!=='object')return fresh();return {...fresh(),...s,completed:s.completed&&typeof s.completed==='object'?s.completed:{},drafts:s.drafts&&typeof s.drafts==='object'?s.drafts:{},daily:s.daily&&typeof s.daily==='object'?s.daily:{},profile:s.profile&&typeof s.profile==='object'?s.profile:{name:'Explorateur C'}}}catch{return fresh()}}
 let state=load();
@@ -36,11 +39,12 @@ function today(date=new Date()){return [date.getFullYear(),String(date.getMonth(
 function completed(id){return !!state.completed[id]}
 const requirements={
 c01:[],c02:['c01'],c03:['c01'],c04:['c01'],
-c05:['c03'],c06:['c05'],c07:['c05'],c08:['c05'],c09:['c08'],
-c10:['c09'],c11:['c10'],c12:['c10'],c13:['c10'],c14:['c12'],c15:['c14'],
+c05:['c03'],c06:['c05'],c07:['c05'],c08:['c05'],c09:['c05'],
+c10:['c09'],c11:['c10'],c12:['c10'],c13:['c10'],c14:['c12'],c15:['c12'],
 c16:['c15'],c17:['c16'],c18:['c16'],c19:['c18'],
 c20:['c19'],c21:['c20'],c22:['c20'],c23:['c20'],c24:['c23'],
-c25:['c24'],c26:['c25'],c27:['c25'],c28:['c27'],c29:['c28'],c30:['c29']
+c25:['c24'],c26:['c25'],c27:['c25'],c28:['c25'],c29:['c28'],c30:['c29'],
+g01:['c09'],g02:['c24'],g03:['c28']
 };
 const lessonRows={
 start:[['c01'],['c02','c03','c04']],
@@ -52,7 +56,7 @@ arrays:[['c25'],['c26','c27'],['c28']],
 functions:[['c29'],['c30']]
 };
 function unlocked(l){if(track==='revision'||new URLSearchParams(location.search).get('teacher')==='1')return true;return (requirements[l.id]||[]).every(completed)}
-function nextAvailable(){return curriculum.lessons[track].find(l=>!completed(l.id)&&unlocked(l))||curriculum.lessons[track].find(l=>!completed(l.id))||curriculum.lessons[track][0]}
+function nextAvailable(){return curriculum.lessons[track].find(l=>(track==='revision'||l.kind==='main')&&!completed(l.id)&&unlocked(l))||curriculum.lessons[track].find(l=>!completed(l.id)&&unlocked(l))||curriculum.lessons[track][0]}
 function drawPathLines(){
 for(const path of document.querySelectorAll('.journey-path')){
  const svg=path.querySelector('svg.path-connections');if(!svg)continue;
@@ -63,7 +67,7 @@ for(const path of document.querySelectorAll('.journey-path')){
  svg.replaceChildren();
  for(const node of circles){
   const target=node.dataset.id;
-  for(const fromId of requirements[target]||[]){
+  for(const fromId of (find(target)?.kind==='side'||find(target)?.kind==='gold'?[]:requirements[target]||[])){
    const from=at(fromId);if(!from)continue;
    const a=from.querySelector('.lesson-symbol').getBoundingClientRect(),b=node.querySelector('.lesson-symbol').getBoundingClientRect();
    const x1=a.left+a.width/2-bounds.left,y1=a.bottom-bounds.top;
@@ -83,8 +87,8 @@ function notify(message){$('toast').textContent=message;$('toast').classList.add
 function streak(){return getProfileStats(state).streak}
 function recordActivity(kind){const key=today();if(!state.daily||typeof state.daily!=='object')state.daily={};if(!state.daily[key]||typeof state.daily[key]!=='object')state.daily[key]={runs:0,checks:0,passed:0};state.daily[key][kind]=(Number(state.daily[key][kind])||0)+1;state.lastActivity=key;save()}
 function updateStats(){const done=curriculum.lessons[track].filter(l=>completed(l.id)).length,allDone=Object.keys(state.completed).filter(id=>ids.has(id)).length,total=curriculum.lessons[track].length,pct=Math.round(done/total*100);
-$('completedCount').textContent=done;$('totalXp').textContent=allDone*20;$('trackPercent').textContent=pct+'%';
-$('xpSidebar').textContent=$('xpTop').textContent=allDone*20;$('streakSidebar').textContent=streak();
+$('completedCount').textContent=done;$('totalXp').textContent=xpTotal();$('trackPercent').textContent=pct+'%';
+$('xpSidebar').textContent=$('xpTop').textContent=xpTotal();$('streakSidebar').textContent=streak();
 $('progressLabel').textContent=done+' / '+total+' terminés';$('progressPercent').textContent=pct+'%';$('progressFill').style.width=pct+'%';
 }
 function render(){
@@ -108,17 +112,18 @@ for(const group of groups){
  h.textContent=group.title;p.textContent=group.subtitle;details.append(h,p);
  const count=document.createElement('span');count.className='module-count';
  count.textContent=items.filter(l=>completed(l.id)).length+'/'+items.length+' ✓';heading.append(number,details,count);section.append(heading);
+ if(!revision){const learn=document.createElement('button');learn.type='button';learn.className='course-open';learn.textContent='▤ Découvrir le cours · '+group.title;learn.addEventListener('click',()=>learning.open(group.id,items.find(l=>l.kind==='main')?.id));section.append(learn);}
  const path=document.createElement('div');path.className=revision?'lesson-path revision-path':'journey-path';
  function makeNode(l){
   const ok=completed(l.id),allowed=unlocked(l),b=document.createElement('button');
   b.type='button';b.className='lesson-node '+(ok?'is-complete':allowed?'is-unlocked':'is-locked');
   if(!ok&&allowed)b.classList.add('is-ready');
   b.disabled=!allowed;b.title=allowed?l.title:'Prérequis : '+(requirements[l.id]||[]).map(id=>find(id)?.title||id).join(', ');
-  b.dataset.id=l.id;
-  const sym=document.createElement('span');sym.className='lesson-symbol';sym.textContent=ok?'✓':allowed?'★':'🔒';
+  b.dataset.id=l.id;b.classList.add('quest-'+(l.kind||'revision'));
+  const sym=document.createElement('span');sym.className='lesson-symbol';sym.textContent=ok?'✓':!allowed?'🔒':l.kind==='gold'?'✦':l.kind==='side'?'◇':'★';
   const info=document.createElement('span');info.className='lesson-info';
   const name=document.createElement('strong');name.textContent=l.title;
-  const meta=document.createElement('small');meta.textContent=ok?'Terminé':allowed?'Défi disponible':'À débloquer';
+  const meta=document.createElement('small');meta.textContent=(l.kind==='gold'?'✦ Doré · +60 XP':l.kind==='side'?'◇ Bonus · +30 XP':l.kind==='main'?'★ Principal · +20 XP':'Révision · +20 XP')+(ok?' · Terminé':allowed?'':' · Verrouillé');
   info.append(name,meta);b.append(sym,info);
   b.setAttribute('aria-label',l.title+(ok?', terminé':allowed?', disponible':', verrouillé'));
   b.addEventListener('click',()=>open(l.id));
@@ -134,6 +139,7 @@ for(const group of groups){
    for(const id of rowIds){const lesson=items.find(l=>l.id===id);if(lesson)row.append(makeNode(lesson))}
    path.append(row);
   }
+  const extras=items.filter(l=>l.kind==='gold');if(extras.length){const row=document.createElement('div');row.className='journey-row golden-row';extras.forEach(l=>row.append(makeNode(l)));path.append(row)}
  }
  section.append(path);parent.append(section);
 }
@@ -142,11 +148,12 @@ if(profileVisible)profileController?.render();
 requestAnimationFrame(drawPathLines);
 }
 function navigate(id=null){const q=new URLSearchParams();if(profileVisible)q.set('view','profile');if(track==='revision')q.set('track','revision');if(id)q.set('lesson',id);if(params.get('teacher')==='1')q.set('teacher','1');history.replaceState(null,'',location.pathname+(q.size?'?'+q:''))}
+const learning=initLearning({onPractice:id=>open(id)});
 function open(id){const l=find(id);if(!l)return;
 if(profileVisible)setProfileVisible(false);
 track=l.id.startsWith('r')?'revision':'course';if(!unlocked(l)){notify('Complète d’abord les défis prérequis.');return}active=l;render();navigate(id);
-$('challengeCategory').textContent=(track==='revision'?'SOUTIEN · RÉVISION':'PARCOURS C')+' · +20 XP';
-$('challengeTitle').textContent=l.title;$('challengePrompt').textContent=l.prompt;$('conceptText').textContent=l.concept||'';
+$('challengeCategory').textContent=(track==='revision'?'SOUTIEN · RÉVISION':'PARCOURS C')+' · +'+xpFor(l)+' XP';
+$('challengeTitle').textContent=l.title;$('challengeCourseBtn').hidden=track==='revision';$('challengeCourseBtn').onclick=()=>{close();learning.open(l.module,l.id)};$('challengePrompt').textContent=l.prompt;$('conceptText').textContent=l.concept||'';
 codeEditor.setValue(state.drafts[id]??l.starter);$('stdinInput').value=l.tests[0].input;
 $('hintText').textContent=l.hint;$('hintText').hidden=true;$('hintButton').setAttribute('aria-expanded','false');
 $('consoleOutput').textContent='Clique sur « Exécuter » pour essayer ton programme.';
@@ -164,7 +171,7 @@ async function check(){if(!active||busy)return;setBusy(true);$('consoleOutput').
 for(const t of active.tests){const r=await execute(codeEditor.getValue(),t.input);const ok=!r.error&&!r.timedOut&&!r.truncated&&r.exitCode===0&&normalize(r.stdout)===normalize(t.expected);results.push({ok,r});if(!ok)break}
 tests(results);const passed=results.length===active.tests.length&&results.every(x=>x.ok);
 recordActivity('checks');if(passed)recordActivity('passed');
-if(passed){const firstCompletion=!completed(active.id);if(firstCompletion){state.completed[active.id]=today();state.lastActivity=today();save()}$('feedback').className='feedback success';$('feedback').textContent=firstCompletion?'Bravo ! Tous les tests sont réussis. +20 XP !':'Bravo ! Tous les tests sont réussis. Défi déjà validé : XP conservés.';$('nextBtn').hidden=false;$('consoleOutput').textContent='✓ Tous les tests sont réussis.';render()}
+if(passed){const firstCompletion=!completed(active.id);if(firstCompletion){state.completed[active.id]=today();state.lastActivity=today();save()}$('feedback').className='feedback success';$('feedback').textContent=firstCompletion?'Bravo ! Tous les tests sont réussis. +'+xpFor(active)+' XP !':'Bravo ! Tous les tests sont réussis. Défi déjà validé : XP conservés.';$('nextBtn').hidden=false;$('consoleOutput').textContent='✓ Tous les tests sont réussis.';render()}
 else{$('feedback').className='feedback error';$('feedback').textContent=results.filter(x=>x.ok).length+'/'+active.tests.length+' tests réussis. Continue !';$('consoleOutput').textContent=describe(results.at(-1)?.r||{})+'\nAttendu : '+JSON.stringify(active.tests[results.length-1]?.expected)}
 }catch(e){$('consoleOutput').textContent=String(e);$('feedback').className='feedback error';$('feedback').textContent='Impossible de charger le compilateur.'}finally{setBusy(false)}}
 function change(next){if(active)close();setProfileVisible(false);track=next;render();navigate();$('sidebar').classList.remove('is-open')}
@@ -201,7 +208,7 @@ $('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify
 $('importBtn').addEventListener('click',()=>$('importFile').click());
 $('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f||f.size>500000)return;try{const obj=JSON.parse(await f.text());if(obj.app!=='CodeQuest C')throw Error();if(!confirm('Remplacer la progression actuelle ?'))return;state=fresh();state.completed=Object.fromEntries(Object.entries(obj.completed||{}).filter(([k,v])=>ids.has(k)&&typeof v==='string'));state.drafts=Object.fromEntries(Object.entries(obj.drafts||{}).filter(([k,v])=>ids.has(k)&&typeof v==='string'&&v.length<60000));state.daily=Object.fromEntries(Object.entries(obj.daily||{}).filter(([k,v])=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&v&&typeof v==='object').map(([k,v])=>[k,{runs:Math.min(100000,Math.max(0,Math.floor(Number(v.runs)||0))),checks:Math.min(100000,Math.max(0,Math.floor(Number(v.checks)||0))),passed:Math.min(100000,Math.max(0,Math.floor(Number(v.passed)||0)))}]));state.profile={name:typeof obj.profile?.name==='string'?obj.profile.name.trim().slice(0,30)||'Explorateur C':'Explorateur C'};save();render();profileController.refreshShortcut();notify('Progression importée')}catch{notify('Sauvegarde invalide')}});
 $('resetBtn').addEventListener('click',()=>{if(confirm('Effacer toute la progression ?')){state=fresh();save();render();profileController.refreshShortcut();notify('Progression réinitialisée')}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active)close();if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&active){e.preventDefault();run()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active&&!learning.isOpen())close();if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&active){e.preventDefault();run()}});
 render();if(params.get('view')==='profile')setProfileVisible(true);else if(params.get('lesson')&&find(params.get('lesson')))open(params.get('lesson'));
 
 window.addEventListener('resize',()=>{codeEditor.resize();requestAnimationFrame(drawPathLines)});
