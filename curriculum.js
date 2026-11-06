@@ -123,3 +123,12 @@ const goldenSpecs=[
 for(const [id,module,title,prompt,input,expected,hint] of goldenSpecs){
  curriculum.lessons.course.push({id,module,title,prompt,hint,concept:'Défi doré : une variante plus exigeante, facultative et sans indice de solution.',kind:'gold',starter:'#include <stdio.h>\n\nint main(void) {\n    // À toi de jouer !\n    return 0;\n}\n',tests:[{input,expected:expected+'\n'}]});
 }
+
+const goldenCases={
+ g01:[['0','0 0 0'],['59','0 0 59'],['3600','1 0 0'],['7322','2 2 2']],
+ g02:[['1','1'],['4','10'],['7','84'],['10','165']],
+ g03:[['2 -8 -3','-8'],['4 10 7 4 1','7'],['5 -4 -9 -1 -6 -2','-2']]
+};
+for(const lesson of curriculum.lessons.course.filter(l=>l.kind==='gold')){
+ lesson.tests.push(...goldenCases[lesson.id].map(([input,expected])=>({input,expected:expected+'\\n'})));
+}
