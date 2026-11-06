@@ -4,7 +4,10 @@ Application statique, en français, pour la progression et le soutien en program
 
 ## Fonctionnalités
 
-- Parcours progressif : **30 défis** dans 7 chapitres (entrées/sorties, variables, conditions, `while`, `for`, tableaux/chaînes, fonctions).
+- Parcours progressif : **30 défis classiques + 3 défis dorés** dans 7 chapitres (entrées/sorties, variables, conditions, `while`, `for`, tableaux/chaînes, fonctions).
+- **Micro-cours intégrés** : une explication courte, un schéma des étapes et un bouton pour développer le cours complet. Contenu Markdown léger défini dans `courses.js`, affiché sans interpréter de HTML arbitraire.
+- **Visualisation interactive de la boucle `for`** : code à gauche, valeurs de `i` et `total` à droite, sortie standard, étapes précédentes/suivantes, lecture automatique et remise à zéro. C'est une simulation pédagogique déterministe, pas un débogueur C général.
+- **Quêtes principales et secondaires** : seules les étapes principales débloquent la suite. Les défis secondaires restent facultatifs et rapportent 30 XP ; trois défis dorés facultatifs proposent des variantes plus exigeantes pour 60 XP. Les défis principaux et révisions rapportent 20 XP.
 - Parcours indépendant **Soutien · Révision 1 : 20 exercices** accessibles dans n'importe quel ordre.
 - Code C dans un éditeur inspiré de VS Code (Ace) : coloration syntaxique C, numéros de ligne, indentation automatique, paires de parenthèses/accolades/guillemets, saisie par-dessus les délimiteurs, correspondance des parenthèses, guides d'indentation et raccourcis clavier. Avec `stdin`, sortie console et validation par des tests automatiques.
 - Exécution entièrement **dans le navigateur**, dans un moteur C/WASM isolé (`@browserrun/sandrun`, moteur `xcc`). Aucun code source d'élève n'est transmis à un serveur de compilation.
@@ -17,7 +20,7 @@ Application statique, en français, pour la progression et le soutien en program
 ## Déploiement sur GitHub Pages (sans build)
 
 1. Créer un **dépôt public**, par exemple `codequest-c` (le compte GitHub Free suffit).
-2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `editor.js`, `profile.js`, `curriculum.js`, `theme.css`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
+2. Mettre les fichiers `index.html`, `styles.css`, `app.js`, `editor.js`, `profile.js`, `curriculum.js`, `courses.js`, `learning.js`, `learning.css`, `theme.css`, `favicon.svg`, `.nojekyll` et `README.md` **à la racine** du dépôt.
 3. Aller dans **Settings → Pages → Build and deployment → Source: Deploy from a branch**.
 4. Choisir **Branch: main** et **Folder: /(root)**, puis **Save**.
 5. Ouvrir `https://<UTILISATEUR>.github.io/<DEPOT>/` après la publication. Pour `S-L-A-K-E-R/codequest-c`, l'adresse prévue serait `https://s-l-a-k-e-r.github.io/codequest-c/` (elle ne fonctionnera qu'après déploiement confirmé).
@@ -56,7 +59,7 @@ Les brouillons existants continuent de fonctionner avec la même clé `localStor
 
 ## Modification des cours
 
-Modifier le fichier `curriculum.js`, qui contient `modules` et les listes d'exercices. Chaque leçon définit :
+Modifier `courses.js` pour les micro-cours et `curriculum.js` pour les défis, qui contient `modules` et les listes d'exercices. Chaque leçon définit :
 
 ```js
 {
@@ -100,3 +103,12 @@ CodeQuest C : MIT, voir `LICENSE`. Le moteur `sandrun` est sous licence MIT, et 
 ## État du prototype
 
 Version initiale : 30 défis du parcours principal, 20 révisions indépendantes. Chaque exercice dispose actuellement d'un test automatisé visible (à étoffer avant une utilisation évaluative). L'éditeur et le moteur C/WASM doivent être validés sur le site publié avant une séance en classe. Le fichier `build_data.py` du prototype de travail n'est pas nécessaire pour l'hébergement.
+
+## Expérimentations pédagogiques (novembre 2026)
+
+- Sur la carte, cliquer sur **Découvrir le cours** pour ouvrir la fiche de la notion, puis **Passer à la pratique** pour commencer un défi principal. Depuis un défi, **Revoir le cours** ouvre la même fiche.
+- Les symboles distinguent **★ principal**, **◇ secondaire** et **✦ doré**. Un défi secondaire n'est jamais un prérequis d'un défi principal. Les prérequis historiques des identifiants `c01` à `c30` ont été adaptés à ce modèle, sans effacer la progression existante.
+- La visualisation `for` est accessible depuis le cours **Boucles for**. Elle montre les cinq phases d'une boucle (initialisation, test, corps, mise à jour, sortie) sur un exemple fixe.
+- Les défis dorés sont `g01` (conversion heures/minutes/secondes), `g02` (somme de carrés impairs), `g03` (deuxième maximum d'un tableau). Ils ont plusieurs jeux de tests et restent facultatifs.
+- Les XP affichés sur la carte et le profil sont calculés à partir du type de défi ; les anciens défis déjà réussis restent comptabilisés. Les nouvelles récompenses ne constituent pas une monnaie dépensable.
+- Les données pédagogiques et la simulation fonctionnent sans backend. Le moteur C reste le même et se charge au premier lancement via le CDN.
