@@ -111,3 +111,15 @@ for (const lesson of curriculum.lessons.course) {
     tests: tests.map(([input, expected]) => ({ input, expected: expected + '\n' }))
   });
 }
+
+// Optional branches never gate the main storyline. IDs c01–c30 remain stable.
+const mainIds = new Set(['c01','c03','c05','c09','c10','c12','c15','c16','c18','c19','c20','c23','c24','c25','c27','c28','c29','c30']);
+for(const lesson of curriculum.lessons.course)lesson.kind=mainIds.has(lesson.id)?'main':'side';
+const goldenSpecs=[
+  ['g01','variables','Le chronomètre parfait','Lis une durée en secondes (entier positif ou nul). Affiche heures, minutes et secondes séparées par un espace. Exemple : 3665 → 1 1 5.','3665','1 1 5','Utilise deux divisions et deux modulos.'],
+  ['g02','for','La somme mystérieuse','Lis n entre 1 et 100. Affiche la somme des carrés des entiers impairs de 1 à n. Exemple : 5 → 35.','5','35','Parcours les nombres impairs avec un pas de 2.'],
+  ['g03','arrays','Le deuxième plus grand','Lis n entre 2 et 100, puis n entiers distincts. Affiche la deuxième plus grande valeur. Exemple : 5 3 9 2 7 4 → 7.','5 3 9 2 7 4','7','Garde en mémoire les deux plus grandes valeurs rencontrées.']
+];
+for(const [id,module,title,prompt,input,expected,hint] of goldenSpecs){
+ curriculum.lessons.course.push({id,module,title,prompt,hint,concept:'Défi doré : une variante plus exigeante, facultative et sans indice de solution.',kind:'gold',starter:'#include <stdio.h>\\n\\nint main(void) {\\n    // À toi de jouer !\\n    return 0;\\n}\\n',tests:[{input,expected:expected+'\\n'}]});
+}
