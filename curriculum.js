@@ -121,5 +121,5 @@ const goldenSpecs=[
   ['g03','arrays','Le deuxième plus grand','Lis n entre 2 et 100, puis n entiers distincts. Affiche la deuxième plus grande valeur. Exemple : 5 3 9 2 7 4 → 7.','5 3 9 2 7 4','7','Garde en mémoire les deux plus grandes valeurs rencontrées.']
 ];
 for(const [id,module,title,prompt,input,expected,hint] of goldenSpecs){
- curriculum.lessons.course.push({id,module,title,prompt,hint,concept:'Défi doré : une variante plus exigeante, facultative et sans indice de solution.',kind:'gold',starter:'#include <stdio.h>\\n\\nint main(void) {\\n    // À toi de jouer !\\n    return 0;\\n}\\n',tests:[{input,expected:expected+'\\n'}]});
+ curriculum.lessons.course.push({id,module,title,prompt,hint,concept:'Défi doré : une variante plus exigeante, facultative et sans indice de solution.',kind:'gold',starter:'#include <stdio.h>\n\nint main(void) {\n    // À toi de jouer !\n    return 0;\n}\n',tests:[{input,expected:expected+'\n'}]});
 }
