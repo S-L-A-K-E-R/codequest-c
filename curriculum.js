@@ -130,5 +130,5 @@ const goldenCases={
  g03:[['2 -8 -3','-8'],['4 10 7 4 1','7'],['5 -4 -9 -1 -6 -2','-2']]
 };
 for(const lesson of curriculum.lessons.course.filter(l=>l.kind==='gold')){
- lesson.tests.push(...goldenCases[lesson.id].map(([input,expected])=>({input,expected:expected+'\\n'})));
+ lesson.tests.push(...goldenCases[lesson.id].map(([input,expected])=>({input,expected:expected+'\n'})));
 }
